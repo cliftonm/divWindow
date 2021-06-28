@@ -1,0 +1,94 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>Introduction</title>
+</head>
+
+<body>
+
+<h2>Introduction</h2>
+<p><img border="0" src="screenshot.png" width="464" height="278"></p>
+<p>I've been wanting a sizeable, minimizable, maximizable floating window for a 
+while now.&nbsp; As usual I was not happy with what I've found on the interwebs.&nbsp; 
+The following:</p>
+<ul>
+	<li><a href="https://codepen.io/jkasun/pen/QrLjXP">Simple Javascript and CSS 
+	Draggable Resizable div</a></li>
+	<li><a href="https://codepen.io/jcagumbay/pen/mRvGXd">Draggable Resizable 
+	without jquery ui over iframe</a> </li>
+	<li><a href="https://github.com/riversun/JSFrame.js/">jsFrame</a> </li>
+</ul>
+<p>are three examples that came closest but lacked either the full behavior I 
+wanted or 
+lacked a sufficiently complete API or were overly complicated, as in jsFrame.&nbsp; 
+However they all were good starting points for this implementation.&nbsp; Nor 
+did I want to bring in a large package like <a href="https://www.jqwidgets.com/">
+jqWidgets</a> or similar web UI simply for this one feature.&nbsp; So, time to 
+invent the wheel again except this time make it more like a smooth round wheel 
+rather than something roughly hewn from a rock.</p>
+<h3>Key Points</h3>
+<p>1: Windows are sizeable and draggable:</p>
+<p><img border="0" src="point1.png" width="426" height="72"></p>
+<p>2: Windows are maximizable (screenshot here is clipped to the right):</p>
+<p><img border="0" src="point2.png" width="467" height="159"></p>
+<p>3: Windows are minimizable to the bottom of the screen:</p>
+<p><img border="0" src="point3.png" width="613" height="33"></p>
+<p>4: Windows are minimizable in place:</p>
+<p><img border="0" src="point4.png" width="502" height="127"></p>
+<p>5: Complete control of the close, minimize, and maximize buttons:</p>
+<p><img border="0" src="point5.png" width="236" height="83"></p>
+<p>6: Automatic topmost when clicking on the header (compare with the screenshot 
+at the top of the article):</p>
+<p><img border="0" src="point6.png" width="375" height="283"></p>
+<h2>API</h2>
+<p>The public methods provide for a reasonable amount of control over the 
+DivWindow and these are self-explanatory:</p>
+<pre>constructor(id: string, options?: DivWindowOptions)
+
+setCaption(caption: string)
+
+setColor(color: string)
+
+setContent(html: string)
+
+getPosition(): DivWindowPosition
+
+getSize(): DivWindowSize
+
+setPosition(x: string, y: string)
+
+setSize(w: string, h: string)
+
+setWidth(w: string)
+
+setHeight(h: string)
+
+close()
+
+minimize(atPosition = false)
+
+maximize()
+
+restore()</pre>
+<h2>Usage</h2>
+<p>At a minimum, one creates a div with some content, for example:</p>
+<pre>&lt;div id=&quot;window1&quot; caption=&quot;Another Window&quot;&gt;
+  &lt;p&gt;All good men&lt;br /&gt;Must come to an end.&lt;/p&gt;
+&lt;/div&gt;</pre>
+<p>and initializes the DivWindow with:</p>
+<pre>new DivWindow(&quot;window1&quot;);</pre>
+<p>rendering:</p>
+<p><img border="0" src="render1.png" width="213" height="120"></p>
+<p>The window by default will size automatically to the extents of the content.</p>
+<p>Additional options can be defined declaratively (in contrast to using the API 
+functions above):</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h2>Implementation</h2>
+<p>&nbsp;</p>
+
+</body>
+
+</html>
