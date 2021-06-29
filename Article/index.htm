@@ -114,7 +114,15 @@ functions above):</p>
 	close/minimize/maximize buttons.</li>
 	<li>I have a kludge when maximizing the window to avoid scrollbars.</li>
 	<li>DivWindows within DivWindows within DivWindows is not supported.</li>
+	<li>I don't handle the resize event, as this cannot be wired up to an 
+	element, and I didn't want to dig deeper into this, so it's possible to 
+	resize a contained window beyond the size of the container.</li>
+	<li>If you resize a DivWindow that has minimized child DivWindows, the child 
+	DivWindows will not automatically move to the bottom of the parent DivWindow.</li>
+	<li>The code prevents dragging a minimized or maximized window, but you can 
+	change that.</li>
 </ul>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 
 </body>
