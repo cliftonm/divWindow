@@ -8,16 +8,35 @@
     <script src="divWindow.js"></script>
 </head>
 <body>
-    <div id="window1" caption="A Window">
-        <p>All good men<br />Must come to an end.</p>
+    <div id="outerwindow1" caption="Window 1">
+        Window 1
     </div>
-    <div id="window2" caption="My Window">
-        Hello World!
+    <div id="outerwindow2" caption="Window 2">
+        Window 2
     </div>
-    <div id="window3" caption="Three by Three">
-        <p>We formed Three by Three Seattle after recognizing a need for home & office products that solve organizational challenges without sacrificing style. We approach design from a modern, playful angle, spinning ordinary items into display-worthy goods. Our classic magnetic strip bulletin board was the first of its kind, paving the way for a new category.</p>
-        <p><a href="https://threebythree.com/">Three by Three</a></p>
 
+    <div id="www" caption="W-w-W">
+        <div id="innerwindow1" caption="Window 1">
+            Inner Window 1
+        </div>
+        <div id="innerwindow2" caption="Window 2">
+            Inner Window 2
+        </div>
+    </div>
+
+    <!-- Some wrapper to demonstrate separate divWindows -->
+    <div style="position:absolute; left:600px; top:100px; width:600px; height:400px; border:1px solid black;">
+        <div id="window1" caption="A Window">
+            <p>All good men<br />Must come to an end.</p>
+        </div>
+        <div id="window2" caption="My Window">
+            Hello World!
+        </div>
+        <div id="window3" caption="Three by Three">
+            <p>We formed Three by Three Seattle after recognizing a need for home & office products that solve organizational challenges without sacrificing style. We approach design from a modern, playful angle, spinning ordinary items into display-worthy goods. Our classic magnetic strip bulletin board was the first of its kind, paving the way for a new category.</p>
+            <p><a href="https://threebythree.com/">Three by Three</a></p>
+
+        </div>
     </div>
 </body>
 </html>

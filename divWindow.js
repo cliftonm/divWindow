@@ -51,6 +51,10 @@ class DivWindow {
         this.configure(options);
         this.setCaption(caption);
     }
+    create(id, options) {
+        const newdw = new DivWindow(id, options);
+        return newdw;
+    }
     setCaption(caption) {
         document.getElementById(this.idWindowCaption).innerHTML = caption;
     }
@@ -70,19 +74,24 @@ class DivWindow {
     setPosition(x, y) {
         this.dw.style.left = x;
         this.dw.style.top = y;
+        return this;
     }
     setSize(w, h) {
         this.dw.style.width = w;
         this.dw.style.height = h;
+        return this;
     }
     setWidth(w) {
         this.dw.style.width = w;
+        return this;
     }
     setHeight(h) {
         this.dw.style.height = h;
+        return this;
     }
     close() {
         this.dw.remove();
+        return this;
     }
     minimize(atPosition = false) {
         this.saveState();
@@ -99,6 +108,7 @@ class DivWindow {
             this.dw.style.left = left + "px";
             // Should we disable dragging when minimized at the bottom?
         }
+        return this;
     }
     maximize() {
         this.saveState();
@@ -109,12 +119,14 @@ class DivWindow {
         this.dw.style.setProperty("resize", "none");
         this.maximizedState = true;
         this.minimizedState = false;
+        return this;
     }
     restore() {
         this.restoreState();
         this.dw.style.setProperty("resize", "both");
         this.minimizedState = false;
         this.maximizedState = false;
+        return this;
     }
     setupIDs(id) {
         this.idWindowTemplate = `${id}_windowTemplate`;
@@ -145,10 +157,17 @@ class DivWindow {
         this.maximizedState ? this.restore() : this.maximize();
     }
     updateZOrder() {
-        const nodes = document.querySelectorAll("[divWindow]");
+        // Get all divWindow instances in the document so the 
+        // current divWindow becomes topmost of all.
+        const nodes = this.getDivWindows(true);
         const maxz = Math.max(...Array.from(nodes)
             .map(n => parseInt(window.document.defaultView.getComputedStyle(n).getPropertyValue('z-index'))));
         this.dw.style.setProperty("z-index", (maxz + 1).toString());
+    }
+    getDivWindows(useDocument = false) {
+        const el = this.dw.parentElement.parentElement;
+        const els = ((el.localName === "body" || useDocument) ? document : el).querySelectorAll("[divWindow]");
+        return els;
     }
     onMouseDown(e) {
         // debugging:
@@ -178,11 +197,28 @@ class DivWindow {
     onMouseMove(e) {
         const dx = this.mx - e.clientX;
         const dy = this.my - e.clientY;
+        const dwx = this.dw.offsetLeft - dx;
+        const dwy = this.dw.offsetTop - dy;
+        const pos = this.contain(dwx, dwy);
         // offsetLeft and offsetTop are numbers, whereas dw.style.left/top is a string.
         // But interestingly, offsetLeft and offsetTop are read-only properties!
-        this.dw.style.left = this.dw.offsetLeft - dx + "px";
-        this.dw.style.top = this.dw.offsetTop - dy + "px";
+        this.dw.style.left = pos.x + "px";
+        this.dw.style.top = pos.y + "px";
         this.updateMousePosition(e);
+    }
+    contain(dwx, dwy) {
+        dwx = dwx < 0 ? 0 : dwx;
+        dwy = dwy < 0 ? 0 : dwy;
+        const el = this.dw.parentElement.parentElement;
+        if (el.localName !== "body") {
+            if (dwx + this.dw.offsetWidth >= el.offsetWidth) {
+                dwx = el.offsetWidth - this.dw.offsetWidth - 1;
+            }
+            if (dwy + this.dw.offsetHeight >= el.offsetHeight) {
+                dwy = el.offsetHeight - this.dw.offsetHeight - 1;
+            }
+        }
+        return new DivWindowPosition(dwx, dwy);
     }
     startDrag(e) {
         this.updateMousePosition(e);
@@ -217,7 +253,7 @@ class DivWindow {
         }
     }
     findAvailableMinimizedSlot(minTop) {
-        const nodes = document.querySelectorAll("[divWindow]");
+        const nodes = this.getDivWindows();
         let leftOfLeftmost = Math.min(...Array.from(nodes)
             .filter(n => n.offsetTop === minTop)
             .map(n => n.offsetLeft));
@@ -232,7 +268,9 @@ class DivWindow {
     }
 }
 window.onload = () => {
-    new DivWindow("window1");
+    new DivWindow("outerwindow1").setPosition("50px", "50px");
+    new DivWindow("outerwindow2").setPosition("50px", "200px");
+    new DivWindow("window1").setPosition("0px", "0px");
     // const dw = new DivWindow("window1", { hasClose: false, hasMinimize: false, moveMinimizedToBottom: false }); //, hasMinimize: false, hasMaximize: false });
     // dw.setCaption("Test test Test");
     // dw.setColor("green");
@@ -248,5 +286,10 @@ window.onload = () => {
     dw3.setColor("darkred");
     //    dw2.setCaption("My Window");
     //    dw2.setContent("Hello World");
+    new DivWindow("www")
+        .setPosition("50px", "300px")
+        .setSize("400px", "400px")
+        .create("innerwindow1").setPosition("10px", "50px")
+        .create("innerwindow2").setPosition("60px", "100px");
 };
 //# sourceMappingURL=divWindow.js.map

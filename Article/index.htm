@@ -39,13 +39,23 @@ rather than something roughly hewn from a rock.</p>
 <p><img border="0" src="point4.png" width="502" height="127"></p>
 <p>5: Complete control of the close, minimize, and maximize buttons:</p>
 <p><img border="0" src="point5.png" width="236" height="83"></p>
-<p>6: Automatic topmost when clicking on the header (compare with the screenshot 
-at the top of the article):</p>
+<p>6: Automatic topmost when clicking on the header -- compare with the screenshot 
+at the top of the article:</p>
 <p><img border="0" src="point6.png" width="375" height="283"></p>
-<h2>API</h2>
+<p>7: Windows are contained within their wrapper div.&nbsp; Here the inner 
+windows are constrained to live within the outer div:</p>
+<p><img border="0" src="point7.png" width="612" height="412"></p>
+<p>8: Given point #7, we can have windows within windows, again constrained by 
+the outer window size:</p>
+<p><img border="0" src="point8.png" width="326" height="198"></p>
+<h2>DivWindow Class API</h2>
 <p>The public methods provide for a reasonable amount of control over the 
-DivWindow and these are self-explanatory:</p>
+DivWindow and these are self-explanatory.&nbsp; Except for the &quot;get&quot; functions, 
+these return the DivWindow instance so they can be chained for a fluent syntax 
+style.</p>
 <pre>constructor(id: string, options?: DivWindowOptions)
+
+create(id: string, options?: DivWindowOptions)
 
 setCaption(caption: string)
 
@@ -87,6 +97,18 @@ functions above):</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 <h2>Implementation</h2>
+<p>&nbsp;</p>
+
+<h2>Some Loose Ends</h2>
+<ul>
+	<li>For a constrained window, when dragging it past the extents of the 
+	parent container, the mouse keeps moving and loses the &quot;move&quot; cursor and 
+	it's position relative to the window caption.</li>
+	<li>If you shrink a DivWindow that itself contains DivWindows, the inner 
+	DivWindows will not adjust to remain constrained.</li>
+	<li>A window caption that is too long will collide with the 
+	close/minimize/maximize buttons.</li>
+</ul>
 <p>&nbsp;</p>
 
 </body>
