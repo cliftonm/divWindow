@@ -28,26 +28,30 @@ did I want to bring in a large package like <a href="https://www.jqwidgets.com/"
 jqWidgets</a> or similar web UI simply for this one feature.&nbsp; So, time to 
 invent the wheel again except this time make it more like a smooth round wheel 
 rather than something roughly hewn from a rock.</p>
-<h3>Key Points</h3>
-<p>1: Windows are sizeable and draggable:</p>
+<h2>Key Features</h2>
+<h3>Windows are sizeable and draggable</h3>
 <p><img border="0" src="point1.png" width="426" height="72"></p>
-<p>2: Windows are maximizable (screenshot here is clipped to the right):</p>
+<h3>Windows are maximizable </h3>
+<p>screenshot here is clipped to the right:</p>
 <p><img border="0" src="point2.png" width="467" height="159"></p>
-<p>3: Windows are minimizable to the bottom of the screen:</p>
+<h3>Windows are minimizable to the bottom of the screen</h3>
 <p><img border="0" src="point3.png" width="613" height="33"></p>
-<p>4: Windows are minimizable in place:</p>
+<h3>Windows are minimizable in place</h3>
 <p><img border="0" src="point4.png" width="502" height="127"></p>
-<p>5: Complete control of the close, minimize, and maximize buttons:</p>
+<h3>Complete control of the close, minimize, and maximize buttons</h3>
 <p><img border="0" src="point5.png" width="236" height="83"></p>
-<p>6: Automatic topmost when clicking on the header -- compare with the screenshot 
-at the top of the article:</p>
+<h3>Automatic topmost when clicking on the header</h3>
+<p>Compare with the screenshot 
+at the top of the article.</p>
 <p><img border="0" src="point6.png" width="375" height="283"></p>
-<p>7: Windows are contained within their wrapper div.&nbsp; Here the inner 
-windows are constrained to live within the outer div:</p>
+<h3>Windows are contained within their wrapper div</h3>
+<p>Here the inner windows are constrained to live within the outer div:</p>
 <p><img border="0" src="point7.png" width="612" height="412"></p>
-<p>8: Given point #7, we can have windows within windows, again constrained by 
-the outer window size:</p>
-<p><img border="0" src="point8.png" width="326" height="198"></p>
+<h3>Windows within windows</h3>
+<p><img border="0" src="point8.png" width="317" height="199"></p>
+<h3>Window state can persisted between sessions</h3>
+<p>You can save and reload the DivWindow states (position, size, state) for the 
+entire document or a container.</p>
 <h2>DivWindow Class API</h2>
 <p>The public methods provide for a reasonable amount of control over the 
 DivWindow and these are self-explanatory.&nbsp; Except for the &quot;get&quot; functions, 
@@ -108,6 +112,8 @@ functions above):</p>
 	DivWindows will not adjust to remain constrained.</li>
 	<li>A window caption that is too long will collide with the 
 	close/minimize/maximize buttons.</li>
+	<li>I have a kludge when maximizing the window to avoid scrollbars.</li>
+	<li>DivWindows within DivWindows within DivWindows is not supported.</li>
 </ul>
 <p>&nbsp;</p>
 

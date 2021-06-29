@@ -22,6 +22,12 @@ class DivWindow {
     constructor(id, options) {
         this.minimizedState = false;
         this.maximizedState = false;
+        this.CAPTION_HEIGHT = 24;
+        this.MINIMIZED_WIDTH = "200px";
+        this.MINIMIZED_HEIGHT = "23px";
+        this.MAXIMIZED_WIDTH = "99%";
+        this.MAXIMIZED_HEIGHT = "99%";
+        this.MAXIMIZED_PADDING = "3px";
         // inline block automatically sizes the div the the extents of the inner content.
         // https://stackoverflow.com/a/33026219
         this.template = '\
@@ -57,13 +63,16 @@ class DivWindow {
     }
     setCaption(caption) {
         document.getElementById(this.idWindowCaption).innerHTML = caption;
+        return this;
     }
     setColor(color) {
         this.dw.style.setProperty("border", `1px solid ${color}`);
         this.dwc.style.setProperty("background-color", color);
+        return this;
     }
     setContent(html) {
         document.getElementById(this.idWindowContent).innerHTML = html;
+        return this;
     }
     getPosition() {
         return new DivWindowPosition(this.dw.offsetLeft, this.dw.offsetTop);
@@ -95,7 +104,7 @@ class DivWindow {
     }
     minimize(atPosition = false) {
         this.saveState();
-        this.dw.style.height = "23px";
+        this.dw.style.height = this.MINIMIZED_HEIGHT;
         this.dw.style.setProperty("resize", "none");
         this.minimizedState = true;
         this.maximizedState = false;
@@ -103,7 +112,7 @@ class DivWindow {
             const minTop = (window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight) - 25;
             const left = this.findAvailableMinimizedSlot(minTop);
             // Force minimized window when moving to bottom to have a fixed width.
-            this.dw.style.width = "200px";
+            this.dw.style.width = this.MINIMIZED_WIDTH;
             this.dw.style.top = minTop + "px";
             this.dw.style.left = left + "px";
             // Should we disable dragging when minimized at the bottom?
@@ -112,10 +121,15 @@ class DivWindow {
     }
     maximize() {
         this.saveState();
-        this.dw.style.left = "3px";
-        this.dw.style.top = "3px";
-        this.dw.style.width = "99%";
-        this.dw.style.height = "99%";
+        // 0, 0, 100%, 100% results in scrollbars.  Ugh.
+        this.dw.style.left = this.MAXIMIZED_PADDING;
+        this.dw.style.top = this.MAXIMIZED_PADDING;
+        this.dw.style.width = this.MAXIMIZED_WIDTH;
+        this.dw.style.height = this.MAXIMIZED_HEIGHT;
+        //this.dw.style.left = "0px";
+        //this.dw.style.top = "0px";
+        //this.dw.style.width = "100%";
+        //this.dw.style.height = "100%";
         this.dw.style.setProperty("resize", "none");
         this.maximizedState = true;
         this.minimizedState = false;
@@ -207,9 +221,18 @@ class DivWindow {
         this.updateMousePosition(e);
     }
     contain(dwx, dwy) {
+        let el = this.dw.parentElement.parentElement;
+        let offsety = 0;
+        // DivWindow within DivWindow?
+        if (el.id.includes("_windowContent")) {
+            // If so, get the parent container, not the content area.
+            el = el.parentElement;
+            // Account for the caption:
+            offsety = this.CAPTION_HEIGHT;
+        }
         dwx = dwx < 0 ? 0 : dwx;
-        dwy = dwy < 0 ? 0 : dwy;
-        const el = this.dw.parentElement.parentElement;
+        dwy = dwy < offsety ? offsety : dwy;
+        // Constrained within a parent?
         if (el.localName !== "body") {
             if (dwx + this.dw.offsetWidth >= el.offsetWidth) {
                 dwx = el.offsetWidth - this.dw.offsetWidth - 1;
@@ -289,7 +312,7 @@ window.onload = () => {
     new DivWindow("www")
         .setPosition("50px", "300px")
         .setSize("400px", "400px")
-        .create("innerwindow1").setPosition("10px", "50px")
-        .create("innerwindow2").setPosition("60px", "100px");
+        .create("innerwindow1").setPosition("10px", "50px").setColor("#90EE90")
+        .create("innerwindow2").setPosition("60px", "100px").setColor("#add8e6");
 };
 //# sourceMappingURL=divWindow.js.map

@@ -47,6 +47,13 @@ class DivWindow {
     protected idMinimize: string;
     protected idMaximize: string;
 
+    CAPTION_HEIGHT = 24;
+    MINIMIZED_WIDTH = "200px";
+    MINIMIZED_HEIGHT = "23px";
+    MAXIMIZED_WIDTH = "99%";
+    MAXIMIZED_HEIGHT = "99%";
+    MAXIMIZED_PADDING = "3px";
+
     // inline block automatically sizes the div the the extents of the inner content.
     // https://stackoverflow.com/a/33026219
     protected template = '\
@@ -86,17 +93,23 @@ class DivWindow {
         return newdw;
     }
 
-    public setCaption(caption: string): void {
+    public setCaption(caption: string): DivWindow {
         document.getElementById(this.idWindowCaption).innerHTML = caption;
+
+        return this;
     }
 
-    public setColor(color: string): void {
+    public setColor(color: string): DivWindow {
         this.dw.style.setProperty("border", `1px solid ${color}`);
         this.dwc.style.setProperty("background-color", color);
+
+        return this;
     }
 
-    public setContent(html: string): void {
+    public setContent(html: string): DivWindow {
         document.getElementById(this.idWindowContent).innerHTML = html;
+
+        return this;
     }
 
     public getPosition(): DivWindowPosition {
@@ -141,7 +154,7 @@ class DivWindow {
 
     public minimize(atPosition = false): DivWindow {
         this.saveState();
-        this.dw.style.height = "23px";
+        this.dw.style.height = this.MINIMIZED_HEIGHT;
         this.dw.style.setProperty("resize", "none");
         this.minimizedState = true;
         this.maximizedState = false;
@@ -151,7 +164,7 @@ class DivWindow {
             const left = this.findAvailableMinimizedSlot(minTop);
 
             // Force minimized window when moving to bottom to have a fixed width.
-            this.dw.style.width = "200px";      
+            this.dw.style.width = this.MINIMIZED_WIDTH;
             this.dw.style.top = minTop + "px";
             this.dw.style.left = left + "px";
 
@@ -163,10 +176,17 @@ class DivWindow {
 
     public maximize(): DivWindow {
         this.saveState();
-        this.dw.style.left = "3px";
-        this.dw.style.top = "3px";
-        this.dw.style.width = "99%"; 
-        this.dw.style.height = "99%";
+        // 0, 0, 100%, 100% results in scrollbars.  Ugh.
+        this.dw.style.left = this.MAXIMIZED_PADDING;
+        this.dw.style.top = this.MAXIMIZED_PADDING;
+        this.dw.style.width = this.MAXIMIZED_WIDTH; 
+        this.dw.style.height = this.MAXIMIZED_HEIGHT;
+
+        //this.dw.style.left = "0px";
+        //this.dw.style.top = "0px";
+        //this.dw.style.width = "100%";
+        //this.dw.style.height = "100%";
+
         this.dw.style.setProperty("resize", "none");
         this.maximizedState = true;
         this.minimizedState = false;
@@ -278,11 +298,22 @@ class DivWindow {
     }
 
     protected contain(dwx: number, dwy: number): DivWindowPosition {
+        let el = this.dw.parentElement.parentElement;
+        let offsety = 0;
+
+        // DivWindow within DivWindow?
+        if (el.id.includes("_windowContent")) {
+            // If so, get the parent container, not the content area.
+            el = el.parentElement;
+
+            // Account for the caption:
+            offsety = this.CAPTION_HEIGHT;
+        }
+
         dwx = dwx < 0 ? 0 : dwx;
-        dwy = dwy < 0 ? 0 : dwy;
+        dwy = dwy < offsety ? offsety : dwy;
 
-        const el = this.dw.parentElement.parentElement;
-
+        // Constrained within a parent?
         if (el.localName !== "body") {
 
             if (dwx + this.dw.offsetWidth >= el.offsetWidth) {
@@ -385,6 +416,6 @@ window.onload = () => {
     new DivWindow("www")
         .setPosition("50px", "300px")
         .setSize("400px", "400px")
-        .create("innerwindow1").setPosition("10px", "50px")
-        .create("innerwindow2").setPosition("60px", "100px");
+        .create("innerwindow1").setPosition("10px", "50px").setColor("#90EE90")
+        .create("innerwindow2").setPosition("60px", "100px").setColor("#add8e6");
 };
