@@ -1,4 +1,4 @@
-﻿class DivWindowPosition {
+﻿export class DivWindowPosition {
     public x: number;
     public y: number;
 
@@ -8,7 +8,7 @@
     }
 }
 
-class DivWindowSize {
+export class DivWindowSize {
     public w: number;
     public h: number;
 
@@ -18,14 +18,35 @@ class DivWindowSize {
     }
 }
 
-class DivWindowOptions {
+export class DivWindowOptions {
+    public left?: number;
+    public top?: number;
+    public width?: number;
+    public height?: number;
     public hasClose? = true;
     public hasMinimize?= true;
     public hasMaximize?= true;
     public moveMinimizedToBottom?= true;
+    public color?: string;
 }
 
-class DivWindow {
+export class DivWindowState {
+    public id: string;
+    public minimizedState = false;
+    public maximizedState = false;
+    public left: number;
+    public top: number;
+    public width: number;
+    public height: number;
+    public restoreLeft: string;
+    public restoreTop: string;
+    public restoreWidth: number;
+    public restoreHeight: number;
+}
+
+export class DivWindow {
+    protected static divWindows: DivWindow[] = [];
+
     protected dw: HTMLDivElement;
     protected dwc: HTMLDivElement;
     protected mx: number;
@@ -38,6 +59,7 @@ class DivWindow {
     protected height: number;
     protected options: DivWindowOptions;
 
+    protected containerId: string;
     protected idWindowTemplate: string;
     protected idCaptionBar: string;
     protected idWindowCaption: string;
@@ -74,9 +96,54 @@ class DivWindow {
 </div>\
 ';
 
+    public get x(): number {
+        return document.getElementById(this.idWindowTemplate).offsetLeft;
+    }
+
+    public set x(x: number) {
+        document.getElementById(this.idWindowTemplate).style.left = x + "px";
+    }
+
+    public get y(): number {
+        return document.getElementById(this.idWindowTemplate).offsetTop;
+    }
+
+    public set y(y:number) {
+        document.getElementById(this.idWindowTemplate).style.top = y + "px";
+    }
+
+    public get w(): number {
+        return document.getElementById(this.idWindowTemplate).offsetWidth;
+    }
+
+    public set w(w: number) {
+        document.getElementById(this.idWindowTemplate).style.width = w + "px";
+    }
+
+    public get h(): number {
+        return document.getElementById(this.idWindowTemplate).offsetHeight;
+    }
+
+    public set h(h: number) {
+        document.getElementById(this.idWindowTemplate).style.height = h + "px";
+    }
+
     constructor(id: string, options?: DivWindowOptions) {
+        DivWindow.divWindows.push(this);
+
+        this.containerId = id;
         this.setupIDs(id);
-        this.options = options ?? new DivWindowOptions();
+
+        const optionsValue = document.getElementById(id).attributes["divWindowOptions"]?.value;
+        let declaredOptions: DivWindowOptions;
+
+        if (optionsValue) {
+            declaredOptions = JSON.parse(optionsValue);
+        }
+
+        // Passed in options overrides any declared options.
+        this.options = options ?? declaredOptions ?? new DivWindowOptions();
+
         const divwin = document.getElementById(id);
         const caption = divwin.getAttribute("caption");
         const content = divwin.innerHTML;
@@ -93,8 +160,66 @@ class DivWindow {
         document.getElementById(this.idMinimize).onclick = () => this.minimizeRestore();
         document.getElementById(this.idMaximize).onclick = () => this.maximizeRestore();
 
-        this.configure(options);
+        this.configure(this.options);
         this.setCaption(caption);
+    }
+
+    public static saveLayout(id?: string): void {
+        const els = (id ? document.getElementById(id) : document).querySelectorAll("[divWindow]");
+        const key = `divWindowState${id ?? "document"}`;
+
+        const states: DivWindowState[] = Array
+            .from(els)
+            .map(el => DivWindow.divWindows.filter(dw => dw.idWindowTemplate === el.id)[0])
+            .filter(dw => dw)       // ignore windows we can't find, though this should not happen.
+            .map(dw => ({
+                id: dw.idWindowTemplate,
+                minimizedState: dw.minimizedState,
+                maximizedState: dw.maximizedState,
+                left: dw.x,
+                top: dw.y,
+                width: dw.w,
+                height: dw.h,
+                restoreLeft: dw.left,
+                restoreTop: dw.top,
+                restoreWidth: dw.width,
+                restoreHeight: dw.height
+            }) as DivWindowState);
+
+        window.localStorage.setItem(key, JSON.stringify(states));
+    }
+
+    public static loadLayout(id?: string): void {
+        const key = `divWindowState${id ?? "document"}`;
+        const jsonStates = window.localStorage.getItem(key);
+
+        if (jsonStates) {
+            const states = JSON.parse(jsonStates) as DivWindowState[];
+
+            states.forEach(state => {
+                const dw = DivWindow.divWindows.filter(dw => dw.idWindowTemplate === state.id)[0];
+
+                // Is it in our list, and does it exist (maybe the user closed it?)
+                if (dw && document.getElementById(dw.idWindowTemplate)) {
+                    dw.minimizedState = state.minimizedState;
+                    dw.maximizedState = state.maximizedState;
+                    dw.left = state.restoreLeft;
+                    dw.top = state.restoreTop;
+                    dw.width = state.restoreWidth;
+                    dw.height = state.restoreHeight;
+                    dw.setPosition(state.left + "px", state.top + "px");
+                    dw.setSize(state.width + "px", state.height + "px");
+
+                    if (dw.minimizedState || dw.maximizedState) {
+                        document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "none");
+                        document.getElementById(dw.idWindowDraggableArea).style.setProperty("cursor", "default");
+                    } else {
+                        document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "both");
+                        document.getElementById(dw.idWindowDraggableArea).style.setProperty("cursor", "move");
+                    }
+                }
+            });
+        }
     }
 
     public create(id: string, options?: DivWindowOptions): DivWindow {
@@ -158,6 +283,7 @@ class DivWindow {
 
     public close(): DivWindow {
         this.dw.remove();
+        this.removeFromWindowList();
 
         return this;
     }
@@ -165,7 +291,6 @@ class DivWindow {
     public minimize(atPosition = false): DivWindow {
         this.saveState();
         this.dw.style.height = this.MINIMIZED_HEIGHT;
-        this.dw.style.setProperty("resize", "none");
         this.minimizedState = true;
         this.maximizedState = false;
 
@@ -192,16 +317,10 @@ class DivWindow {
             this.dw.style.left = left + "px";
         }
 
+        this.dw.style.setProperty("resize", "none");
         document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "default");
 
         return this;
-    }
-
-    public isContained(): boolean {
-        const el = this.dw.parentElement.parentElement;
-        const www = el.localName !== "body";
-
-        return www;
     }
 
     public maximize(): DivWindow {
@@ -230,15 +349,10 @@ class DivWindow {
         // 5 is some magic number to get the height of a WwW to not extend past the outer window.
         this.dw.style.height = www ? (el.offsetHeight - offsety - 5) + "px" : this.MAXIMIZED_HEIGHT;
 
-        //this.dw.style.left = "0px";
-        //this.dw.style.top = "0px";
-        //this.dw.style.width = "100%";
-        //this.dw.style.height = "100%";
-
-        this.dw.style.setProperty("resize", "none");
         this.maximizedState = true;
         this.minimizedState = false;
 
+        this.dw.style.setProperty("resize", "none");
         document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "default");
 
         return this;
@@ -246,11 +360,26 @@ class DivWindow {
 
     public restore(): DivWindow {
         this.restoreState();
-        this.dw.style.setProperty("resize", "both");
         this.minimizedState = false;
         this.maximizedState = false;
 
         return this;
+    }
+
+    protected removeFromWindowList(): void {
+        const idx = DivWindow.divWindows.findIndex(dw => dw.idWindowTemplate === this.idWindowTemplate);
+
+        if (idx !== -1) {
+            // Note that splice modifies the array in place and returns a new array containing the elements that have been removed.
+            DivWindow.divWindows.splice(idx, 1);
+        }
+    }
+
+    protected isContained(): boolean {
+        const el = this.dw.parentElement.parentElement;
+        const www = el.localName !== "body";
+
+        return www;
     }
 
     protected setupIDs(id: string): void {
@@ -277,6 +406,7 @@ class DivWindow {
         this.dw.style.width = this.width + "px";
         this.dw.style.height = this.height + "px";
 
+        this.dw.style.setProperty("resize", "both");
         document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "move");
     }
 
@@ -387,24 +517,42 @@ class DivWindow {
         this.my = e.clientY;
     }
 
-    protected configure(options?: DivWindowOptions): void {
-        if (options) {
-            options.hasClose = options.hasClose === undefined ? true : options.hasClose;
-            options.hasMinimize = options.hasMinimize === undefined ? true : options.hasMinimize;
-            options.hasMaximize = options.hasMaximize === undefined ? true : options.hasMaximize;
-            options.moveMinimizedToBottom = options.moveMinimizedToBottom === undefined ? true : options.moveMinimizedToBottom;
+    protected configure(options: DivWindowOptions): void {
+        options.hasClose = options.hasClose === undefined ? true : options.hasClose;
+        options.hasMinimize = options.hasMinimize === undefined ? true : options.hasMinimize;
+        options.hasMaximize = options.hasMaximize === undefined ? true : options.hasMaximize;
+        options.moveMinimizedToBottom = options.moveMinimizedToBottom === undefined ? true : options.moveMinimizedToBottom;
 
-            if (!options.hasClose) {
-                document.getElementById(this.idClose).style.display = "none";
-            }
+        if (!options.hasClose) {
+            document.getElementById(this.idClose).style.display = "none";
+        }
 
-            if (!options.hasMinimize) {
-                document.getElementById(this.idMinimize).style.display = "none";
-            }
+        if (!options.hasMinimize) {
+            document.getElementById(this.idMinimize).style.display = "none";
+        }
 
-            if (!options.hasMaximize) {
-                document.getElementById(this.idMaximize).style.display = "none";
-            }
+        if (!options.hasMaximize) {
+            document.getElementById(this.idMaximize).style.display = "none";
+        }
+
+        if (options.left) {
+            this.x = options.left;
+        }
+
+        if (options.top) {
+            this.y = options.top;
+        }
+
+        if (options.width) {
+            this.w = options.width;
+        }
+
+        if (options.height) {
+            this.h = options.height;
+        }
+
+        if (options.color) {
+            this.setColor(options.color);
         }
     }
 
@@ -431,38 +579,3 @@ class DivWindow {
     }
 }
 
-window.onload = () => {
-
-    new DivWindow("outerwindow1").setPosition("50px", "50px");
-    new DivWindow("outerwindow2").setPosition("50px", "200px");
-    new DivWindow("window1").setPosition("0px", "0px");
-    // const dw = new DivWindow("window1", { hasClose: false, hasMinimize: false, moveMinimizedToBottom: false }); //, hasMinimize: false, hasMaximize: false });
-    // dw.setCaption("Test test Test");
-    // dw.setColor("green");
-    // dw.setContent("<p>All good men<br/>Must come to an end.</p>");
-    // dw.setPosition("50px", "250px");
-    // dw.setSize("250px", "150px");
-    // const pos = dw.getPosition();
-    // const size = dw.getSize();
-
-    const dw2 = new DivWindow("window2", { hasMaximize: false });
-
-    const dw3 = new DivWindow("window3", { hasClose: false, hasMaximize: false, moveMinimizedToBottom: false });
-    dw3.setPosition("250px", "50px");
-    dw3.setWidth("300px");
-    dw3.setColor("darkred");
-//    dw2.setCaption("My Window");
-//    dw2.setContent("Hello World");
-
-    new DivWindow("www")
-        .setPosition("50px", "300px")
-        .setSize("400px", "400px")
-        .create("innerwindow1").setPosition("10px", "50px").setColor("#90EE90")
-        .create("innerwindow2").setPosition("60px", "100px").setColor("#add8e6");
-
-    //document.getElementById("test").onclick = () => alert("click div");
-    //document.getElementById("{w}_windowCaption").onclick = () => alert("click caption");
-    //document.getElementById("{w}_close").onclick = () => alert("close");
-    //document.getElementById("{w}_minimize").onclick = () => alert("min");
-    // document.getElementById("{w}_captionBar").onmousedown = () => alert("Mouse Down");
-};

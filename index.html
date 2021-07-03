@@ -5,13 +5,18 @@
     <meta charset="utf-8" />
     <title>DivWin</title>
     <link rel="stylesheet" href="divWindow.css" type="text/css" />
-    <script src="divWindow.js"></script>
+    <script data-main="AppConfig" src="require.js"></script>
 </head>
 <body>
-    <div id="outerwindow1" caption="Window 1">
+    <div>
+        <button id="saveLayout">Save Layout</button>
+        <button id="loadLayout">Load Layout</button>
+    </div>
+
+    <div id="outerwindow1" caption="Window 1" divWindowOptions='{"left":100, "top":50}'>
         Window 1
     </div>
-    <div id="outerwindow2" caption="Window 2">
+    <div id="outerwindow2" caption="Window 2" divWindowOptions='{"left":50, "top":200}'>
         Window 2
     </div>
 
@@ -32,7 +37,7 @@
         <div id="window2" caption="My Window">
             Hello World!
         </div>
-        <div id="window3" caption="Three by Three">
+        <div id="window3" caption="Three by Three" divWindowOptions='{ "left":250, "top":50, "width":300, "color": "darkred", "hasClose": false, "hasMaximize": false, "moveMinimizedToBottom": false }'>
             <p>We formed Three by Three Seattle after recognizing a need for home & office products that solve organizational challenges without sacrificing style. We approach design from a modern, playful angle, spinning ordinary items into display-worthy goods. Our classic magnetic strip bulletin board was the first of its kind, paving the way for a new category.</p>
             <p><a href="https://threebythree.com/">Three by Three</a></p>
 
