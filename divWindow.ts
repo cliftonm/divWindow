@@ -28,6 +28,8 @@ export class DivWindowOptions {
     public hasMaximize?= true;
     public moveMinimizedToBottom?= true;
     public color?: string;
+    public isMinimized?: boolean;
+    public isMaximized?: boolean;
 }
 
 export class DivWindowState {
@@ -160,8 +162,8 @@ export class DivWindow {
         document.getElementById(this.idMinimize).onclick = () => this.minimizeRestore();
         document.getElementById(this.idMaximize).onclick = () => this.maximizeRestore();
 
-        this.configure(this.options);
         this.setCaption(caption);
+        this.configure(this.options);
     }
 
     public static saveLayout(id?: string): void {
@@ -210,9 +212,15 @@ export class DivWindow {
                     dw.setPosition(state.left + "px", state.top + "px");
                     dw.setSize(state.width + "px", state.height + "px");
 
-                    if (dw.minimizedState || dw.maximizedState) {
+                    if (dw.maximizedState) {
                         document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "none");
                         document.getElementById(dw.idWindowDraggableArea).style.setProperty("cursor", "default");
+                    } else if (dw.minimizedState) {
+                        document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "none");
+
+                        if (dw.options.moveMinimizedToBottom) {
+                            document.getElementById(dw.idWindowDraggableArea).style.setProperty("cursor", "default");
+                        }
                     } else {
                         document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "both");
                         document.getElementById(dw.idWindowDraggableArea).style.setProperty("cursor", "move");
@@ -318,7 +326,10 @@ export class DivWindow {
         }
 
         this.dw.style.setProperty("resize", "none");
-        document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "default");
+
+        if (this.options.moveMinimizedToBottom) {
+            document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "default");
+        }
 
         return this;
     }
@@ -440,9 +451,10 @@ export class DivWindow {
     }
 
     protected onDraggableAreaMouseDown(e: MouseEvent): void {
+        this.updateZOrder();
+
         // Should not be draggable but we'll check anyways.
-        if (!this.minimizedState && !this.maximizedState) {
-            this.updateZOrder();
+        if ((!this.minimizedState || (this.minimizedState && !this.options.moveMinimizedToBottom)) && !this.maximizedState) {
             this.startDrag(e);
         }
     }
@@ -553,6 +565,13 @@ export class DivWindow {
 
         if (options.color) {
             this.setColor(options.color);
+        }
+
+        if (options.isMinimized) {
+            this.minimize();
+        }
+        if (options.isMaximized) {
+            this.maximize();
         }
     }
 

@@ -84,8 +84,8 @@ define(["require", "exports"], function (require, exports) {
             document.getElementById(this.idClose).onclick = () => this.close();
             document.getElementById(this.idMinimize).onclick = () => this.minimizeRestore();
             document.getElementById(this.idMaximize).onclick = () => this.maximizeRestore();
-            this.configure(this.options);
             this.setCaption(caption);
+            this.configure(this.options);
         }
         get x() {
             return document.getElementById(this.idWindowTemplate).offsetLeft;
@@ -150,9 +150,15 @@ define(["require", "exports"], function (require, exports) {
                         dw.height = state.restoreHeight;
                         dw.setPosition(state.left + "px", state.top + "px");
                         dw.setSize(state.width + "px", state.height + "px");
-                        if (dw.minimizedState || dw.maximizedState) {
+                        if (dw.maximizedState) {
                             document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "none");
                             document.getElementById(dw.idWindowDraggableArea).style.setProperty("cursor", "default");
+                        }
+                        else if (dw.minimizedState) {
+                            document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "none");
+                            if (dw.options.moveMinimizedToBottom) {
+                                document.getElementById(dw.idWindowDraggableArea).style.setProperty("cursor", "default");
+                            }
                         }
                         else {
                             document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "both");
@@ -232,7 +238,9 @@ define(["require", "exports"], function (require, exports) {
                 this.dw.style.left = left + "px";
             }
             this.dw.style.setProperty("resize", "none");
-            document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "default");
+            if (this.options.moveMinimizedToBottom) {
+                document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "default");
+            }
             return this;
         }
         maximize() {
@@ -322,9 +330,9 @@ define(["require", "exports"], function (require, exports) {
             return els;
         }
         onDraggableAreaMouseDown(e) {
+            this.updateZOrder();
             // Should not be draggable but we'll check anyways.
-            if (!this.minimizedState && !this.maximizedState) {
-                this.updateZOrder();
+            if ((!this.minimizedState || (this.minimizedState && !this.options.moveMinimizedToBottom)) && !this.maximizedState) {
                 this.startDrag(e);
             }
         }
@@ -409,6 +417,12 @@ define(["require", "exports"], function (require, exports) {
             }
             if (options.color) {
                 this.setColor(options.color);
+            }
+            if (options.isMinimized) {
+                this.minimize();
+            }
+            if (options.isMaximized) {
+                this.maximize();
             }
         }
         findAvailableMinimizedSlot(minTop) {
