@@ -156,7 +156,7 @@ export class DivWindow {
         this.dw = document.getElementById(this.idWindowTemplate) as HTMLDivElement;
         this.dwc = document.getElementById(this.idCaptionBar) as HTMLDivElement;
 
-        this.dwc.onmousedown = () => this.updateZOrder();
+        document.getElementById(this.idCaptionBar).onmousedown = () => this.updateZOrder();
         document.getElementById(this.idWindowDraggableArea).onmousedown = e => this.onDraggableAreaMouseDown(e);
         document.getElementById(this.idClose).onclick = () => this.close();
         document.getElementById(this.idMinimize).onclick = () => this.minimizeRestore();
@@ -164,31 +164,6 @@ export class DivWindow {
 
         this.setCaption(caption);
         this.configure(this.options);
-    }
-
-    public static saveLayout(id?: string): void {
-        const els = (id ? document.getElementById(id) : document).querySelectorAll("[divWindow]");
-        const key = `divWindowState${id ?? "document"}`;
-
-        const states: DivWindowState[] = Array
-            .from(els)
-            .map(el => DivWindow.divWindows.filter(dw => dw.idWindowTemplate === el.id)[0])
-            .filter(dw => dw)       // ignore windows we can't find, though this should not happen.
-            .map(dw => ({
-                id: dw.idWindowTemplate,
-                minimizedState: dw.minimizedState,
-                maximizedState: dw.maximizedState,
-                left: dw.x,
-                top: dw.y,
-                width: dw.w,
-                height: dw.h,
-                restoreLeft: dw.left,
-                restoreTop: dw.top,
-                restoreWidth: dw.width,
-                restoreHeight: dw.height
-            }) as DivWindowState);
-
-        window.localStorage.setItem(key, JSON.stringify(states));
     }
 
     public static loadLayout(id?: string): void {
@@ -228,6 +203,31 @@ export class DivWindow {
                 }
             });
         }
+    }
+
+    public static saveLayout(id?: string): void {
+        const els = (id ? document.getElementById(id) : document).querySelectorAll("[divWindow]");
+        const key = `divWindowState${id ?? "document"}`;
+
+        const states: DivWindowState[] = Array
+            .from(els)
+            .map(el => DivWindow.divWindows.filter(dw => dw.idWindowTemplate === el.id)[0])
+            .filter(dw => dw)       // ignore windows we can't find, though this should not happen.
+            .map(dw => ({
+                id: dw.idWindowTemplate,
+                minimizedState: dw.minimizedState,
+                maximizedState: dw.maximizedState,
+                left: dw.x,
+                top: dw.y,
+                width: dw.w,
+                height: dw.h,
+                restoreLeft: dw.left,
+                restoreTop: dw.top,
+                restoreWidth: dw.width,
+                restoreHeight: dw.height
+            }) as DivWindowState);
+
+        window.localStorage.setItem(key, JSON.stringify(states));
     }
 
     public create(id: string, options?: DivWindowOptions): DivWindow {
@@ -430,8 +430,7 @@ export class DivWindow {
     }
 
     protected updateZOrder(): void {
-        // Get all divWindow instances in the document so the 
-        // current divWindow becomes topmost of all.
+        // Get all divWindow instances in the document so the current divWindow becomes topmost of all.
         const nodes = this.getDivWindows(true);
 
         const maxz = Math.max(
@@ -497,7 +496,6 @@ export class DivWindow {
 
         // Constrained within a parent?
         if (el.localName !== "body") {
-
             if (dwx + this.dw.offsetWidth >= el.offsetWidth) {
                 dwx = el.offsetWidth - this.dw.offsetWidth - 1;
             }
