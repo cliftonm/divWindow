@@ -174,7 +174,7 @@ new DivWindow(&quot;window3&quot;);</pre>
 <p><img border="0" src="divwin.png" width="612" height="416"></p>
 <h2>Implementation</h2>
 <p>Here I'll cover the more interesting aspects of the implementation, as much 
-of the code should be obvious.</p>
+of the code should be obvious.&nbsp; No jQuery is used!</p>
 <h3>A Note Regard require.js</h3>
 <p>Because I'm intending to use this as a component in other projects where I'm 
 using require.js, there is a small amount of boilerplate to support the <code>export</code> 
@@ -294,6 +294,19 @@ the document:</p>
 
   return els;
 }</pre>
+<h4>All Those IDs</h4>
+<p>Yeah, the template has 8 elements that have dynamic ids, so I found this 
+makes the rest of the code a lot more readable:</p>
+<pre>protected setupIDs(id: string): void {
+  this.idWindowTemplate = `${id}_windowTemplate`;
+  this.idCaptionBar = `${id}_captionBar`;
+  this.idWindowCaption = `${id}_windowCaption`;
+  this.idWindowDraggableArea = `${id}_windowDraggableArea`;
+  this.idWindowContent = `${id}_windowContent`;
+  this.idClose = `${id}_close`;
+  this.idMinimize = `${id}_minimize`;
+  this.idMaximize = `${id}_maximize`;
+}</pre>
 <h3>Z-Order</h3>
 <pre>protected updateZOrder(): void {
   // Get all divWindow instances in the document so the current divWindow becomes topmost of all.
@@ -405,15 +418,15 @@ following scenarios:</p>
 <p><img border="0" src="min2.png" width="521" height="194"></p>
 <p>Minimize the the bottom of a non-window container:</p>
 <p><img border="0" src="min3.png" width="634" height="65"></p>
-<p>Furthermore, the minimizer tries to be smart.&nbsp; It sets the width of a 
+<p>Furthermore, the minimizer tries to be smart in a dumb way.&nbsp; It sets the width of a 
 minimized window to 200px and places them in order horizontally across the 
 bottom.&nbsp; If a window is restored, the other minimized windows do not shift 
 position:</p>
 <p><img border="0" src="min4.png" width="451" height="58"></p>
 <p>But the empty slot is filled again when a window is minimized again (see 
 previous screenshot.)</p>
-<p>The behavior of this is entirely my choice, obviously if you don't like this 
-behavior you can change it to your liking.</p>
+<p>This behavior was entirely my choice, obviously if you don't like this 
+behavior you can change it to your liking, I would imagine rather easily.</p>
 <h3>Save Layout</h3>
 <pre>public static saveLayout(id?: string): void {
   const els = (id ? document.getElementById(id) : document).querySelectorAll(&quot;[divWindow]&quot;);
@@ -571,8 +584,8 @@ windowing component that I can now use for other applications.</p>
 	parent container, the mouse keeps moving and loses the &quot;move&quot; cursor and 
 	it's position relative to the window caption.</li>
 	<li>If you shrink a <code>DivWindow</code> that itself contains <code>DivWindows</code>, the inner 
-	<code>DivWindows</code> will not adjust to remain constrained, which includes minimized 
-	windows within the container.</li>
+	<code>DivWindows</code> will not adjust to remain constrained, which 
+	includes minimized windows within the container.</li>
 	<li>A window caption that is too long will collide with the 
 	close/minimize/maximize buttons.</li>
 	<li>I have a kludge when maximizing the window to avoid scrollbars.</li>
