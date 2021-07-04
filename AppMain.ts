@@ -17,6 +17,6 @@ export class AppMain {
             .create("innerwindow1").setPosition("10px", "50px").setColor("#90EE90")
             .create("innerwindow2").setPosition("60px", "100px").setColor("#add8e6");
 
-        new DivWindow("exampleContent").setPosition("100px", "700px").w = 200;
+        new DivWindow("exampleContent").setPosition("100px", "700px").w = 300;
     }
 }

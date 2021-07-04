@@ -8,8 +8,10 @@
 
 <body>
 
-<h2>Introduction</h2>
 <p><img border="0" src="screenshot.png" width="464" height="278"></p>
+<h2><a name="0">Table of Contents</a></h2>
+<div id="toc"><ul><ul><li><a href="#0">Table of Contents</a></li><li><a href="#1">Introduction</a></li><li><a href="#2">Key Features</a></li><ul><li><a href="#3">Windows are sizeable and draggable</a></li><li><a href="#4">Windows are maximizable </a></li><li><a href="#5">Windows are minimizable to the bottom of the screen</a></li><li><a href="#6">Windows within containers are minimized to the bottom of the container</a></li><li><a href="#7">Windows are minimizable in place</a></li><li><a href="#8">Complete control of the close, minimize, and maximize buttons</a></li><li><a href="#9">Automatic topmost when clicking on the header</a></li><li><a href="#10">Windows are contained within their wrapper div</a></li><li><a href="#11">Windows within windows</a></li><li><a href="#12">Window state can persisted between sessions</a></li></ul><li><a href="#13">DivWindow Class API</a></li><ul><li><a href="#14">Public Functions</a></li><li><a href="#15">Static Functions</a></li><li><a href="#16">Get/Set Properties</a></li></ul><li><a href="#17">Usage</a></li><ul><li><a href="#18">Windows within Window</a></li><li><a href="#19">Windows Within Container Elements</a></li></ul><li><a href="#20">Implementation</a></li><ul><li><a href="#21">A Note Regard require.js</a></li><li><a href="#22">Events</a></li><li><a href="#23">The Window Template</a></li><ul><li><a href="#24">Some Things to Note</a></li><li><a href="#25">All Those IDs</a></li></ul><li><a href="#26">Z-Order</a></li><li><a href="#27">Containing Windows</a></li><li><a href="#28">Minimizing Windows</a></li><li><a href="#29">Save Layout</a></li><li><a href="#30">Load Layout</a></li><li><a href="#31">The Full Set of Initialization Options</a></li><li><a href="#32">CSS</a></li></ul><li><a href="#33">Conclusion</a></li><ul><li><a href="#34">Some Loose Ends</a></li></ul></ul></ul></div>
+<h2><a name="1">Introduction</a></h2>
 <p>I've been wanting a sizeable, minimizable, maximizable floating window for a 
 while now.&nbsp; As usual I was not happy with what I've found on the interwebs.&nbsp; 
 The following:</p>
@@ -28,36 +30,37 @@ did I want to bring in a large package like <a href="https://www.jqwidgets.com/"
 jqWidgets</a> or similar web UI simply for this one feature.&nbsp; So, time to 
 invent the wheel again except this time make it more like a smooth round wheel 
 rather than something roughly hewn from a rock.</p>
-<h2>Key Features</h2>
-<h3>Windows are sizeable and draggable</h3>
+<h2><a name="2">Key Features</a></h2>
+<h3><a name="3">Windows are sizeable and draggable</a></h3>
 <p><img border="0" src="point1.png" width="426" height="72"></p>
-<h3>Windows are maximizable </h3>
+<h3><a name="4">Windows are maximizable </a></h3>
 <p>screenshot here is clipped to the right:</p>
 <p><img border="0" src="point2.png" width="467" height="159"></p>
-<h3>Windows are minimizable to the bottom of the screen</h3>
+<h3><a name="5">Windows are minimizable to the bottom of the screen</a></h3>
 <p><img border="0" src="point3.png" width="613" height="33"></p>
-<h3>Windows within containers are minimized to the bottom of the container</h3>
+<h3><a name="6">Windows within containers are minimized to the bottom of the container</a></h3>
 <p>Assuming that the flag minimized in place is false.</p>
 <p><img border="0" src="point10.png" width="422" height="160"></p>
-<h3>Windows are minimizable in place</h3>
+<h3><a name="7">Windows are minimizable in place</a></h3>
 <p><img border="0" src="point4.png" width="502" height="127"></p>
-<h3>Complete control of the close, minimize, and maximize buttons</h3>
+<h3><a name="8">Complete control of the close, minimize, and maximize buttons</a></h3>
 <p><img border="0" src="point5.png" width="236" height="83"></p>
-<h3>Automatic topmost when clicking on the header</h3>
+<h3><a name="9">Automatic topmost when clicking on the header</a></h3>
 <p>Compare with the screenshot 
 at the top of the article.</p>
 <p><img border="0" src="point6.png" width="375" height="283"></p>
-<h3>Windows are contained within their wrapper div</h3>
+<h3><a name="10">Windows are contained within their wrapper div</a></h3>
 <p>Here the inner windows are constrained to live within the outer div:</p>
 <p><img border="0" src="point7.png" width="612" height="412"></p>
-<h3>Windows within windows</h3>
+<h3><a name="11">Windows within windows</a></h3>
 <p><img border="0" src="point8.png" width="317" height="199"></p>
-<h3>Window state can persisted between sessions</h3>
+<h3><a name="12">Window state can persisted between sessions</a></h3>
 <p>You can save and reload the DivWindow states (position, size, state) for the 
 entire document or a container.</p>
-<h2>DivWindow Class API</h2>
+<h2><a name="13">DivWindow Class API</a></h2>
+<h3><a name="14">Public Functions</a></h3>
 <p>The public methods provide for a reasonable amount of control over the 
-DivWindow and these are self-explanatory.&nbsp; Except for the &quot;get&quot; functions, 
+DivWindow and these are self-explanatory.&nbsp; Except for the "get" functions, 
 these return the DivWindow instance so they can be chained for a fluent syntax 
 style.</p>
 <pre>constructor(id: string, options?: DivWindowOptions)
@@ -89,12 +92,12 @@ minimize(atPosition = false)
 maximize()
 
 restore()</pre>
-<h3>Static Functions</h3>
+<h3><a name="15">Static Functions</a></h3>
 <p>Two static functions handle saving and loading layouts:</p>
 <pre>static saveLayout(id?: string)
 
 static loadLayout(id?: string)</pre>
-<h3>Get/Set Properties</h3>
+<h3><a name="16">Get/Set Properties</a></h3>
 <p>The following properties are also defined, mainly for the convenience of the 
 DivWindow code itself.</p>
 <pre>get x()
@@ -108,85 +111,85 @@ set w(w: number)
 
 get h()
 set h(h: number)</pre>
-<h2>Usage</h2>
+<h2><a name="17">Usage</a></h2>
 <p>At a minimum, one creates a div with some content, for example:</p>
-<pre>&lt;div id=&quot;window1&quot; caption=&quot;Another Window&quot;&gt;
+<pre>&lt;div id="window1" caption="Another Window"&gt;
   &lt;p&gt;All good men&lt;br /&gt;Must come to an end.&lt;/p&gt;
 &lt;/div&gt;</pre>
 <p>and initializes the DivWindow with:</p>
-<pre>new DivWindow(&quot;window1&quot;);</pre>
+<pre>new DivWindow("window1");</pre>
 <p>rendering:</p>
 <p><img border="0" src="render1.png" width="213" height="120"></p>
 <p>The window by default will size automatically to the extents of the content.</p>
 <p>Options can be defined declaratively using the <code>divWindowOptions</code> attribute 
 with a JSON value declaring the options that are being set:</p>
 <p>Example 1:</p>
-<pre>&lt;div id=&quot;outerwindow1&quot; caption=&quot;Window 1&quot; divWindowOptions='{&quot;left&quot;:100, &quot;top&quot;:50}'&gt;
+<pre>&lt;div id="outerwindow1" caption="Window 1" divWindowOptions='{"left":100, "top":50}'&gt;
   Window 1
 &lt;/div&gt;</pre>
 <p>Example 2:</p>
-<pre>&lt;div id=&quot;window3&quot; caption=Example&quot; divWindowOptions='{ &quot;left&quot;:250, &quot;top&quot;:50, &quot;width&quot;:300, 
-       &quot;color&quot;: &quot;darkred&quot;, &quot;hasClose&quot;: false, &quot;hasMaximize&quot;: false, 
-       &quot;moveMinimizedToBottom&quot;: false, &quot;isMinimized&quot;: true }'&gt;
+<pre>&lt;div id="window3" caption=Example" divWindowOptions='{ "left":250, "top":50, "width":300, 
+       "color": "darkred", "hasClose": false, "hasMaximize": false, 
+       "moveMinimizedToBottom": false, "isMinimized": true }'&gt;
   Some Content
 &lt;/div&gt;</pre>
-<h3>Windows within Window</h3>
+<h3><a name="18">Windows within Window</a></h3>
 <p>Declare a the outer window and inner windows, for example:</p>
-<pre>&lt;div id=&quot;www&quot; caption=&quot;W-w-W&quot;&gt;
-  &lt;div id=&quot;innerwindow1&quot; caption=&quot;Window 1&quot;&gt;
+<pre>&lt;div id="www" caption="W-w-W"&gt;
+  &lt;div id="innerwindow1" caption="Window 1"&gt;
     Inner Window 1
   &lt;/div&gt;
-  &lt;div id=&quot;innerwindow2&quot; caption=&quot;Window 2&quot;&gt;
+  &lt;div id="innerwindow2" caption="Window 2"&gt;
     Inner Window 2
   &lt;/div&gt;
 &lt;/div&gt;</pre>
 <p>Then initialize them similar to this:</p>
-<pre>new DivWindow(&quot;www&quot;)
-  .setPosition(&quot;50px&quot;, &quot;300px&quot;)
-  .setSize(&quot;400px&quot;, &quot;400px&quot;)
-  .create(&quot;innerwindow1&quot;).setPosition(&quot;10px&quot;, &quot;50px&quot;).setColor(&quot;#90EE90&quot;)
-  .create(&quot;innerwindow2&quot;).setPosition(&quot;60px&quot;, &quot;100px&quot;).setColor(&quot;#add8e6&quot;);</pre>
+<pre>new DivWindow("www")
+  .setPosition("50px", "300px")
+  .setSize("400px", "400px")
+  .create("innerwindow1").setPosition("10px", "50px").setColor("#90EE90")
+  .create("innerwindow2").setPosition("60px", "100px").setColor("#add8e6");</pre>
 <p>Note the fluent syntax.&nbsp; There's nothing special about <code>create</code> here, it's 
 just like calling <code>new DivWindow()</code>.</p>
 <p>This renders:</p>
 <p><img border="0" src="www1.png" width="312" height="194"></p>
 <p>The inner windows are confined to the outer window.</p>
-<h3>Windows Within Container Elements</h3>
+<h3><a name="19">Windows Within Container Elements</a></h3>
 <p>Here's a simple example where the windows are contained and confined to a 
 container element.</p>
-<pre>&lt;div style=&quot;position:absolute; left:600px; top:100px; width:600px; height:400px; border:1px solid black;&quot;&gt;
-  &lt;div id=&quot;window1&quot; caption=&quot;A Window&quot;&gt;
+<pre>&lt;div style="position:absolute; left:600px; top:100px; width:600px; height:400px; border:1px solid black;"&gt;
+  &lt;div id="window1" caption="A Window"&gt;
     &lt;p&gt;All good men&lt;br /&gt;Must come to an end.&lt;/p&gt;
   &lt;/div&gt;
-  &lt;div id=&quot;window2&quot; caption=&quot;My Window&quot;&gt;
+  &lt;div id="window2" caption="My Window"&gt;
     Hello World!
   &lt;/div&gt;
-    &lt;div id=&quot;window3&quot; caption=&quot;Three by Three&quot; divWindowOptions='{ &quot;left&quot;:250, &quot;top&quot;:75, &quot;width&quot;:300, &quot;color&quot;: &quot;darkred&quot;, &quot;hasClose&quot;: false, &quot;hasMaximize&quot;: false, &quot;moveMinimizedToBottom&quot;: false, &quot;isMinimized&quot;: true }'&gt;
+    &lt;div id="window3" caption="Three by Three" divWindowOptions='{ "left":250, "top":75, "width":300, "color": "darkred", "hasClose": false, "hasMaximize": false, "moveMinimizedToBottom": false, "isMinimized": true }'&gt;
       &lt;p&gt;Some content&lt;/p&gt;
   &lt;/div&gt;
 &lt;/div&gt;
 </pre>
 <p>Example initialization:</p>
-<pre>new DivWindow(&quot;window1&quot;).setPosition(&quot;0px&quot;, &quot;0px&quot;);
-new DivWindow(&quot;window2&quot;, { hasMaximize: false });
-new DivWindow(&quot;window3&quot;);</pre>
+<pre>new DivWindow("window1").setPosition("0px", "0px");
+new DivWindow("window2", { hasMaximize: false });
+new DivWindow("window3");</pre>
 <p>Which renders as:</p>
 <p><img border="0" src="divwin.png" width="612" height="416"></p>
-<h2>Implementation</h2>
+<h2><a name="20">Implementation</a></h2>
 <p>Here I'll cover the more interesting aspects of the implementation, as much 
 of the code should be obvious.&nbsp; No jQuery is used!</p>
-<h3>A Note Regard require.js</h3>
+<h3><a name="21">A Note Regard require.js</a></h3>
 <p>Because I'm intending to use this as a component in other projects where I'm 
 using require.js, there is a small amount of boilerplate to support the <code>export</code> 
 keyword.&nbsp; </p>
 <pre>&lt;head&gt;
-  &lt;meta charset=&quot;utf-8&quot; /&gt;
+  &lt;meta charset="utf-8" /&gt;
   &lt;title&gt;DivWin&lt;/title&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;divWindow.css&quot; type=&quot;text/css&quot; /&gt;
-  &lt;script data-main=&quot;AppConfig&quot; src=&quot;require.js&quot;&gt;&lt;/script&gt;
+  &lt;link rel="stylesheet" href="divWindow.css" type="text/css" /&gt;
+  &lt;script data-main="AppConfig" src="require.js"&gt;&lt;/script&gt;
 &lt;/head&gt;</pre>
 <p>AppConfig.ts:</p>
-<pre>import { AppMain } from &quot;./AppMain&quot;
+<pre>import { AppMain } from "./AppMain"
 
 require(['AppMain'],
   (main: any) =&gt; {
@@ -195,60 +198,60 @@ require(['AppMain'],
   }
 );</pre>
 <p>AppMain.ts (for initializing the demo):</p>
-<pre>import { DivWindow } from &quot;./divWindow&quot;
+<pre>import { DivWindow } from "./divWindow"
 
 export class AppMain {
   public run() {
-    document.getElementById(&quot;saveLayout&quot;).onclick = () =&gt; DivWindow.saveLayout();
-    document.getElementById(&quot;loadLayout&quot;).onclick = () =&gt; DivWindow.loadLayout();
+    document.getElementById("saveLayout").onclick = () =&gt; DivWindow.saveLayout();
+    document.getElementById("loadLayout").onclick = () =&gt; DivWindow.loadLayout();
 
-    new DivWindow(&quot;outerwindow1&quot;);
-    new DivWindow(&quot;outerwindow2&quot;);
-    new DivWindow(&quot;window1&quot;).setPosition(&quot;0px&quot;, &quot;0px&quot;);
-    new DivWindow(&quot;window2&quot;, { hasMaximize: false });
-    new DivWindow(&quot;window3&quot;);
+    new DivWindow("outerwindow1");
+    new DivWindow("outerwindow2");
+    new DivWindow("window1").setPosition("0px", "0px");
+    new DivWindow("window2", { hasMaximize: false });
+    new DivWindow("window3");
 
-    new DivWindow(&quot;www&quot;)
-      .setPosition(&quot;50px&quot;, &quot;300px&quot;)
-      .setSize(&quot;400px&quot;, &quot;400px&quot;)
-      .create(&quot;innerwindow1&quot;).setPosition(&quot;10px&quot;, &quot;50px&quot;).setColor(&quot;#90EE90&quot;)
-      .create(&quot;innerwindow2&quot;).setPosition(&quot;60px&quot;, &quot;100px&quot;).setColor(&quot;#add8e6&quot;);
+    new DivWindow("www")
+      .setPosition("50px", "300px")
+      .setSize("400px", "400px")
+      .create("innerwindow1").setPosition("10px", "50px").setColor("#90EE90")
+      .create("innerwindow2").setPosition("60px", "100px").setColor("#add8e6");
 
-    new DivWindow(&quot;exampleContent&quot;).setPosition(&quot;100px&quot;, &quot;700px&quot;).w = 200;
+    new DivWindow("exampleContent").setPosition("100px", "700px").w = 200;
   }
 }</pre>
 <p>I had the project working fine without require.js, but I really wanted to 
 have the implementation in its final form for other projects, but it's easy to 
 revert back -- just remove the <code>export</code> keyword on all the classes and change how the page is 
 initialized to <code>window.onLoad = () =&gt; {...initializate stuff....};</code></p>
-<h3>Events</h3>
+<h3><a name="22">Events</a></h3>
 <p>The following events are captured for each window:</p>
 <pre>document.getElementById(this.idCaptionBar).onmousedown = () =&gt; this.updateZOrder();
 document.getElementById(this.idWindowDraggableArea).onmousedown = e =&gt; this.onDraggableAreaMouseDown(e);
 document.getElementById(this.idClose).onclick = () =&gt; this.close();
 document.getElementById(this.idMinimize).onclick = () =&gt; this.minimizeRestore();
 document.getElementById(this.idMaximize).onclick = () =&gt; this.maximizeRestore();</pre>
-<h3>The Window Template</h3>
+<h3><a name="23">The Window Template</a></h3>
 <p>The thing I struggled with the most, ironically, was the template that adds 
 itself to the containing DIV element.&nbsp; The struggle here was getting the 
 elements in the right parent-child relationship so that the 
 close/minimize/maximize click events would fire!&nbsp; This may seem silly to 
 the reader, but I had issues as I basically first had child elements defined as 
-a sibling after the div containing the &quot;buttons.&quot;&nbsp; Here's the final form:</p>
+a sibling after the div containing the "buttons."&nbsp; Here's the final form:</p>
 <pre>protected template = '\
-&lt;div id=&quot;{w}_windowTemplate&quot; class=&quot;divWindowPanel&quot; divWindow&gt;\
-  &lt;div id=&quot;{w}_captionBar&quot; class=&quot;divWindowCaption&quot; style=&quot;height: 18px&quot;&gt;\
-    &lt;div class=&quot;noselect&quot; style=&quot;position:absolute; top:3px; left:0px; text-align:center; width: 100%&quot;&gt;\
-      &lt;div id=&quot;{w}_windowCaption&quot; style=&quot;display:inline-block&quot;&gt;\&lt;/div&gt;\
-      &lt;div style=&quot;position:absolute; left:5px; display:inline-block&quot;&gt;\
-        &lt;div id=&quot;{w}_close&quot; class=&quot;dot&quot; style=&quot;background-color:#FC615C; margin-right: 3px&quot;&gt;&lt;/div&gt;\
-        &lt;div id=&quot;{w}_minimize&quot; class=&quot;dot&quot; style=&quot;background-color: #FDBE40; margin-right: 3px&quot;&gt;&lt;/div&gt;\
-        &lt;div id=&quot;{w}_maximize&quot; class=&quot;dot&quot; style=&quot;background-color: #34CA49&quot;&gt;&lt;/div&gt;\
+&lt;div id="{w}_windowTemplate" class="divWindowPanel" divWindow&gt;\
+  &lt;div id="{w}_captionBar" class="divWindowCaption" style="height: 18px"&gt;\
+    &lt;div class="noselect" style="position:absolute; top:3px; left:0px; text-align:center; width: 100%"&gt;\
+      &lt;div id="{w}_windowCaption" style="display:inline-block"&gt;\&lt;/div&gt;\
+      &lt;div style="position:absolute; left:5px; display:inline-block"&gt;\
+        &lt;div id="{w}_close" class="dot" style="background-color:#FC615C; margin-right: 3px"&gt;&lt;/div&gt;\
+        &lt;div id="{w}_minimize" class="dot" style="background-color: #FDBE40; margin-right: 3px"&gt;&lt;/div&gt;\
+        &lt;div id="{w}_maximize" class="dot" style="background-color: #34CA49"&gt;&lt;/div&gt;\
       &lt;/div&gt;\
     &lt;/div&gt;\
-    &lt;div id=&quot;{w}_windowDraggableArea&quot; class=&quot;noselect&quot; style=&quot;position:absolute; top:0px; left:55px; width: 100%; height:22px; cursor: move; display:inline-block&quot;&gt;&amp;nbsp;&lt;/div&gt;\
+    &lt;div id="{w}_windowDraggableArea" class="noselect" style="position:absolute; top:0px; left:55px; width: 100%; height:22px; cursor: move; display:inline-block"&gt;&amp;nbsp;&lt;/div&gt;\
   &lt;/div&gt;\
-  &lt;div id=&quot;{w}_windowContent&quot; class=&quot;divWindowContent&quot;&gt;&lt;/div&gt;\
+  &lt;div id="{w}_windowContent" class="divWindowContent"&gt;&lt;/div&gt;\
 &lt;/div&gt;\
 ';</pre>
 <p>Note that any occurrence of <code>{w}</code> is replaced with the container's element id.&nbsp; 
@@ -263,38 +266,38 @@ then replacing the content with the template (having set the id's of the
 template elements), and finally replacing the content area of the template with 
 the content of the original DIV element.&nbsp; Thus, a window that is 
 declaratively described as:</p>
-<pre>&lt;div id=&quot;exampleContent&quot; caption=&quot;Enter Name&quot;&gt;
+<pre>&lt;div id="exampleContent" caption="Enter Name"&gt;
   &lt;div&gt;
-    &lt;span style=&quot;min-width:100px; display:inline-block&quot;&gt;First Name:&lt;/span&gt; &lt;input /&gt;
+    &lt;span style="min-width:100px; display:inline-block"&gt;First Name:&lt;/span&gt; &lt;input /&gt;
   &lt;/div&gt;
-  &lt;div style=&quot;margin-top:3px&quot;&gt;
-    &lt;span style=&quot;min-width:100px; display:inline-block&quot;&gt;Last Name:&lt;/span&gt; &lt;input /&gt;
+  &lt;div style="margin-top:3px"&gt;
+    &lt;span style="min-width:100px; display:inline-block"&gt;Last Name:&lt;/span&gt; &lt;input /&gt;
   &lt;/div&gt;
 &lt;/div&gt;</pre>
 <p>And initialized as:</p>
-<pre>new DivWindow(&quot;exampleContent&quot;).setPosition(&quot;100px&quot;, &quot;700px&quot;).w = 200;</pre>
+<pre>new DivWindow("exampleContent").setPosition("100px", "700px").w = 300;</pre>
 <p>renders as:</p>
-<p><img border="0" src="enterName.png" width="212" height="130"></p>
+<p><img border="0" src="enterName.png" width="320" height="96"></p>
 <p>and the final HTML structure is (clipped on the right):</p>
 <p><img border="0" src="finalHtml.png" width="634" height="556"></p>
-<h4>Some Things to Note</h4>
-<p>There is a DIV specifically to indicate the draggable area with a &quot;move&quot; 
+<h4><a name="24">Some Things to Note</a></h4>
+<p>There is a DIV specifically to indicate the draggable area with a "move" 
 cursor, that is offset from the buttons in the caption, so if you're mouse is 
 over the buttons the cursor appears as a pointer:</p>
 <p><img border="0" src="pointer1.png" width="216" height="47"></p>
-<p>And as you move the cursor right, it changes to the &quot;move&quot; cursor:</p>
+<p>And as you move the cursor right, it changes to the "move" cursor:</p>
 <p><img border="0" src="pointer2.png" width="218" height="34"></p>
 <p>Also, note the attribute <code>divWindow</code> in the outer template DIV:</p>
-<pre>&lt;div id=&quot;{w}_windowTemplate&quot; class=&quot;divWindowPanel&quot; divWindow&gt;\</pre>
+<pre>&lt;div id="{w}_windowTemplate" class="divWindowPanel" divWindow&gt;\</pre>
 <p>This is used in a couple places to get elements specific to the container or 
 the document:</p>
 <pre>protected getDivWindows(useDocument = false): NodeListOf&lt;Element&gt; {
   const el = this.dw.parentElement.parentElement;
-  const els = ((el.localName === &quot;body&quot; || useDocument) ? document : el).querySelectorAll(&quot;[divWindow]&quot;);
+  const els = ((el.localName === "body" || useDocument) ? document : el).querySelectorAll("[divWindow]");
 
   return els;
 }</pre>
-<h4>All Those IDs</h4>
+<h4><a name="25">All Those IDs</a></h4>
 <p>Yeah, the template has 8 elements that have dynamic ids, so I found this 
 makes the rest of the code a lot more readable:</p>
 <pre>protected setupIDs(id: string): void {
@@ -307,7 +310,7 @@ makes the rest of the code a lot more readable:</p>
   this.idMinimize = `${id}_minimize`;
   this.idMaximize = `${id}_maximize`;
 }</pre>
-<h3>Z-Order</h3>
+<h3><a name="26">Z-Order</a></h3>
 <pre>protected updateZOrder(): void {
   // Get all divWindow instances in the document so the current divWindow becomes topmost of all.
   const nodes = this.getDivWindows(true);
@@ -315,10 +318,10 @@ makes the rest of the code a lot more readable:</p>
   const maxz = Math.max(
     ...Array.from(nodes)
     .map(n =&gt;
-    parseInt(window.document.defaultView.getComputedStyle(n).getPropertyValue(&quot;z-index&quot;))
+    parseInt(window.document.defaultView.getComputedStyle(n).getPropertyValue("z-index"))
   ));
 
-  this.dw.style.setProperty(&quot;z-index&quot;, (maxz + 1).toString());
+  this.dw.style.setProperty("z-index", (maxz + 1).toString());
 }</pre>
 <p>As the code comment points out, any time a window is clicked, it is placed 
 above any other window, including any windows outside of its container.&nbsp; 
@@ -334,13 +337,13 @@ container were selected.</p>
 given that Javascript's number maximum is 1.7976931348623157e+308, I really 
 don't think I have to worry about the user clicking windows to the foreground 
 and exceeding the count.</p>
-<h3>Containing Windows</h3>
+<h3><a name="27">Containing Windows</a></h3>
 <pre>protected contain(dwx: number, dwy: number): DivWindowPosition {
   let el = this.dw.parentElement.parentElement;
   let offsety = 0;
 
   // DivWindow within DivWindow?
-  if (el.id.includes(&quot;_windowContent&quot;)) {
+  if (el.id.includes("_windowContent")) {
     // If so, get the parent container, not the content area.
     el = el.parentElement;
 
@@ -352,7 +355,7 @@ and exceeding the count.</p>
   dwy = dwy &lt; offsety ? offsety : dwy;
 
   // Constrained within a parent?
-  if (el.localName !== &quot;body&quot;) {
+  if (el.localName !== "body") {
     if (dwx + this.dw.offsetWidth &gt;= el.offsetWidth) {
       dwx = el.offsetWidth - this.dw.offsetWidth - 1;
     }
@@ -370,7 +373,7 @@ height.&nbsp; The salient point is that the contained window cannot be moved
 beyond the boundaries of its container.&nbsp; This includes windows that are 
 defined in the <code>body</code> element -- the window cannot move outside of the screen 
 boundaries.</p>
-<h3>Minimizing Windows</h3>
+<h3><a name="28">Minimizing Windows</a></h3>
 <pre>public minimize(atPosition = false): DivWindow {
   this.saveState();
   this.dw.style.height = this.MINIMIZED_HEIGHT;
@@ -383,7 +386,7 @@ boundaries.</p>
     if (this.isContained()) {
       let el = this.dw.parentElement.parentElement;
 
-      if (el.id.includes(&quot;_windowContent&quot;)) {
+      if (el.id.includes("_windowContent")) {
         el = el.parentElement;
       } 
 
@@ -396,14 +399,14 @@ boundaries.</p>
 
     // Force minimized window when moving to bottom to have a fixed width.
     this.dw.style.width = this.MINIMIZED_WIDTH;
-    this.dw.style.top = minTop + &quot;px&quot;;
-    this.dw.style.left = left + &quot;px&quot;;
+    this.dw.style.top = minTop + "px";
+    this.dw.style.left = left + "px";
   }
 
-  this.dw.style.setProperty(&quot;resize&quot;, &quot;none&quot;);
+  this.dw.style.setProperty("resize", "none");
 
   if (this.options.moveMinimizedToBottom) {
-    document.getElementById(this.idWindowDraggableArea).style.setProperty(&quot;cursor&quot;, &quot;default&quot;);
+    document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "default");
   }
 
   return this;
@@ -427,10 +430,10 @@ position:</p>
 previous screenshot.)</p>
 <p>This behavior was entirely my choice, obviously if you don't like this 
 behavior you can change it to your liking, I would imagine rather easily.</p>
-<h3>Save Layout</h3>
+<h3><a name="29">Save Layout</a></h3>
 <pre>public static saveLayout(id?: string): void {
-  const els = (id ? document.getElementById(id) : document).querySelectorAll(&quot;[divWindow]&quot;);
-  const key = `divWindowState${id ?? &quot;document&quot;}`;
+  const els = (id ? document.getElementById(id) : document).querySelectorAll("[divWindow]");
+  const key = `divWindowState${id ?? "document"}`;
 
   const states: DivWindowState[] = Array
     .from(els)
@@ -464,12 +467,12 @@ function (as well as loadLayout), and the <code>DivWindow</code> class implement
 of <code>DivWindow</code> instances.&nbsp; <u><b>However</b></u>, if you are 
 implementing something like a Single Page Application (SPA) that actually has 
 multiple pages with different window layouts, then I would recommend modifying 
-the code so that each &quot;page&quot; maintains it's own collection.</p>
+the code so that each "page" maintains it's own collection.</p>
 <p>Also note that local storage is used so that the layout persists between 
 sessions.</p>
-<h3>Load Layout</h3>
+<h3><a name="30">Load Layout</a></h3>
 <pre>public static loadLayout(id?: string): void {
-  const key = `divWindowState${id ?? &quot;document&quot;}`;
+  const key = `divWindowState${id ?? "document"}`;
   const jsonStates = window.localStorage.getItem(key);
 
   if (jsonStates) {
@@ -486,21 +489,21 @@ sessions.</p>
         dw.top = state.restoreTop;
         dw.width = state.restoreWidth;
         dw.height = state.restoreHeight;
-        dw.setPosition(state.left + &quot;px&quot;, state.top + &quot;px&quot;);
-        dw.setSize(state.width + &quot;px&quot;, state.height + &quot;px&quot;);
+        dw.setPosition(state.left + "px", state.top + "px");
+        dw.setSize(state.width + "px", state.height + "px");
 
         if (dw.maximizedState) {
-          document.getElementById(dw.idWindowTemplate).style.setProperty(&quot;resize&quot;, &quot;none&quot;);
-          document.getElementById(dw.idWindowDraggableArea).style.setProperty(&quot;cursor&quot;, &quot;default&quot;);
+          document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "none");
+          document.getElementById(dw.idWindowDraggableArea).style.setProperty("cursor", "default");
         } else if (dw.minimizedState) {
-          document.getElementById(dw.idWindowTemplate).style.setProperty(&quot;resize&quot;, &quot;none&quot;);
+          document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "none");
 
           if (dw.options.moveMinimizedToBottom) {
-            document.getElementById(dw.idWindowDraggableArea).style.setProperty(&quot;cursor&quot;, &quot;default&quot;);
+            document.getElementById(dw.idWindowDraggableArea).style.setProperty("cursor", "default");
           }
         } else {
-          document.getElementById(dw.idWindowTemplate).style.setProperty(&quot;resize&quot;, &quot;both&quot;);
-          document.getElementById(dw.idWindowDraggableArea).style.setProperty(&quot;cursor&quot;, &quot;move&quot;);
+          document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "both");
+          document.getElementById(dw.idWindowDraggableArea).style.setProperty("cursor", "move");
         }
       }
     });
@@ -508,8 +511,8 @@ sessions.</p>
 }</pre>
 <p>The only thing to note here is the management of the resize and cursor state 
 depending on the restored window's minimized / maximized state and the minimized 
-&quot;in place&quot; option.</p>
-<h3>The Full Set of Initialization Options</h3>
+"in place" option.</p>
+<h3><a name="31">The Full Set of Initialization Options</a></h3>
 <p>These are all the options one can specify when the window is created:</p>
 <pre>export class DivWindowOptions {
   public left?: number;
@@ -525,7 +528,7 @@ depending on the restored window's minimized / maximized state and the minimized
   public isMaximized?: boolean;
 }</pre>
 <p>Any option not defined (no pun intended) reverts to its default behavior.</p>
-<h3>CSS</h3>
+<h3><a name="32">CSS</a></h3>
 <p>For some reason, people like to see the CSS, so here it is:</p>
 <pre>.divWindowPanel {
   left: 300px;
@@ -574,14 +577,17 @@ depending on the restored window's minimized / maximized state and the minimized
 I could click on the caption and it would highlight the text and would cause 
 strange behavior when subsequently dragging the window.&nbsp; This problem was 
 solved by making the caption not selectable.</p>
-<h2>Conclusion</h2>
+<h2><a name="33">Conclusion</a></h2>
 <p>This was quite fun to implement and I finally have a simple but comprehensive 
-windowing component that I can now use for other applications.</p>
+windowing component that I can now use for other applications, such as my
+<a href="https://www.codeproject.com/Articles/5299207/Adaptive-Hierarchical-Knowledge-Management-Part-II">
+Adaptive Hierarchical Knowlege Management</a> series, which I haven't forgotten 
+about but I actually needed a decent window management module for Part III!</p>
 
-<h3>Some Loose Ends</h3>
+<h3><a name="34">Some Loose Ends</a></h3>
 <ul>
 	<li>For a constrained window, when dragging it past the extents of the 
-	parent container, the mouse keeps moving and loses the &quot;move&quot; cursor and 
+	parent container, the mouse keeps moving and loses the "move" cursor and 
 	it's position relative to the window caption.</li>
 	<li>If you shrink a <code>DivWindow</code> that itself contains <code>DivWindows</code>, the inner 
 	<code>DivWindows</code> will not adjust to remain constrained, which 
@@ -606,6 +612,7 @@ windowing component that I can now use for other applications.</p>
 	minimize, maximize, and close buttons?) is not implemented and I really 
 	don't want to get into styling options.</li>
 </ul>
+
 
 </body>
 
