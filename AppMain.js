@@ -17,6 +17,7 @@ define(["require", "exports", "./divWindow"], function (require, exports, divWin
                 .create("innerwindow1").setPosition("10px", "50px").setColor("#90EE90")
                 .create("innerwindow2").setPosition("60px", "100px").setColor("#add8e6");
             new divWindow_1.DivWindow("exampleContent").setPosition("100px", "700px").w = 300;
+            document.getElementById("button").onclick = () => alert("Clicked");
         }
     }
     exports.AppMain = AppMain;

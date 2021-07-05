@@ -18,5 +18,7 @@ export class AppMain {
             .create("innerwindow2").setPosition("60px", "100px").setColor("#add8e6");
 
         new DivWindow("exampleContent").setPosition("100px", "700px").w = 300;
+
+        document.getElementById("button").onclick = () => alert("Clicked");
     }
 }
