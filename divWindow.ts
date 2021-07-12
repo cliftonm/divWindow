@@ -23,7 +23,7 @@ export class DivWindowOptions {
     public top?: number;
     public width?: number;
     public height?: number;
-    public hasClose? = true;
+    public hasClose?= true;
     public hasMinimize?= true;
     public hasMaximize?= true;
     public moveMinimizedToBottom?= true;
@@ -47,6 +47,12 @@ export class DivWindowState {
 }
 
 export class DivWindow {
+    public onMinimize?: (dw: DivWindow) => void;
+    public onMaximize?: (dw: DivWindow) => void;
+    public onRestore?: (dw: DivWindow) => void;
+    public onSelect?: (dw: DivWindow) => void;
+    public onClose?: (dw: DivWindow) => void;
+
     protected static divWindows: DivWindow[] = [];
 
     protected dw: HTMLDivElement;
@@ -73,7 +79,7 @@ export class DivWindow {
 
     BUTTON_SIZE = 10;
     CAPTION_HEIGHT = 24;
-    MINIMIZED_WIDTH = "200px";
+    public static MINIMIZED_WIDTH = "200px";
     MINIMIZED_HEIGHT = "23px";
     MAXIMIZED_WIDTH = "99%";
     MAXIMIZED_HEIGHT = "99%";
@@ -110,7 +116,7 @@ export class DivWindow {
         return document.getElementById(this.idWindowTemplate).offsetTop;
     }
 
-    public set y(y:number) {
+    public set y(y: number) {
         document.getElementById(this.idWindowTemplate).style.top = y + "px";
     }
 
@@ -185,12 +191,15 @@ export class DivWindow {
                     dw.width = state.restoreWidth;
                     dw.height = state.restoreHeight;
                     dw.setPosition(state.left + "px", state.top + "px");
-                    dw.setSize(state.width + "px", state.height + "px");
+
+                    // I think the extends include the border and we don't want to include the border in the calculation here.
+                    dw.setSize((state.width - 2) + "px", (state.height - 2) + "px");
 
                     if (dw.maximizedState) {
                         document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "none");
                         document.getElementById(dw.idWindowDraggableArea).style.setProperty("cursor", "default");
                     } else if (dw.minimizedState) {
+                        dw.setWidth(DivWindow.MINIMIZED_WIDTH);
                         document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "none");
 
                         if (dw.options.moveMinimizedToBottom) {
@@ -234,6 +243,14 @@ export class DivWindow {
         const newdw = new DivWindow(id, options);
 
         return newdw;
+    }
+
+    public show(): void {
+        this.dw.style.display = "block";
+    }
+
+    public hide(): void {
+        this.dw.style.display = "none";
     }
 
     public setCaption(caption: string): DivWindow {
@@ -293,24 +310,27 @@ export class DivWindow {
         this.dw.remove();
         this.removeFromWindowList();
 
+        this.onClose?.apply(null, [this]);
+
         return this;
     }
 
     public minimize(atPosition = false): DivWindow {
         this.saveState();
+        this.dw.style.width = DivWindow.MINIMIZED_WIDTH;
         this.dw.style.height = this.MINIMIZED_HEIGHT;
         this.minimizedState = true;
         this.maximizedState = false;
 
         if (this.options.moveMinimizedToBottom && !atPosition) {
             let minTop;
-            
+
             if (this.isContained()) {
                 let el = this.dw.parentElement.parentElement;
 
                 if (el.id.includes("_windowContent")) {
                     el = el.parentElement;
-                } 
+                }
 
                 minTop = el.offsetHeight - (this.CAPTION_HEIGHT + 3);
             } else {
@@ -320,7 +340,6 @@ export class DivWindow {
             const left = this.findAvailableMinimizedSlot(minTop);
 
             // Force minimized window when moving to bottom to have a fixed width.
-            this.dw.style.width = this.MINIMIZED_WIDTH;
             this.dw.style.top = minTop + "px";
             this.dw.style.left = left + "px";
         }
@@ -330,6 +349,9 @@ export class DivWindow {
         if (this.options.moveMinimizedToBottom) {
             document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "default");
         }
+
+        this.onSelect?.apply(null, [this]);
+        this.onMinimize?.apply(null, [this]);
 
         return this;
     }
@@ -366,13 +388,21 @@ export class DivWindow {
         this.dw.style.setProperty("resize", "none");
         document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "default");
 
+        this.onSelect?.apply(null, [this]);
+        this.onMaximize?.apply(null, [this]);
+
         return this;
     }
 
     public restore(): DivWindow {
-        this.restoreState();
-        this.minimizedState = false;
-        this.maximizedState = false;
+        if (this.minimizedState || this.maximizedState) {
+            this.restoreState();
+            this.minimizedState = false;
+            this.maximizedState = false;
+
+            this.onSelect?.apply(null, [this]);
+            this.onRestore?.apply(null, [this]);
+        }
 
         return this;
     }
@@ -412,13 +442,19 @@ export class DivWindow {
     }
 
     protected restoreState(): void {
-        this.dw.style.left = this.left;
-        this.dw.style.top = this.top;
-        this.dw.style.width = this.width + "px";
-        this.dw.style.height = this.height + "px";
+        if (this.minimizedState || this.maximizedState) {
+            // restore in place?
+            if ((this.options.moveMinimizedToBottom && this.minimizedState) || this.maximizedState) {
+                this.dw.style.left = this.left;
+                this.dw.style.top = this.top;
+            }
 
-        this.dw.style.setProperty("resize", "both");
-        document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "move");
+            this.dw.style.width = this.width + "px";
+            this.dw.style.height = this.height + "px";
+
+            this.dw.style.setProperty("resize", "both");
+            document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "move");
+        }
     }
 
     protected minimizeRestore(): void {
@@ -437,7 +473,7 @@ export class DivWindow {
             ...Array.from(nodes)
                 .map(n =>
                     parseInt(window.document.defaultView.getComputedStyle(n).getPropertyValue("z-index"))
-            ));
+                ));
 
         this.dw.style.setProperty("z-index", (maxz + 1).toString());
     }
@@ -456,6 +492,8 @@ export class DivWindow {
         if ((!this.minimizedState || (this.minimizedState && !this.options.moveMinimizedToBottom)) && !this.maximizedState) {
             this.startDrag(e);
         }
+
+        this.onSelect?.apply(null, [this]);
     }
 
     protected onMouseUp(e: MouseEvent): void {

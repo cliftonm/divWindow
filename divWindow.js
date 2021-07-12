@@ -39,7 +39,6 @@ define(["require", "exports"], function (require, exports) {
             this.maximizedState = false;
             this.BUTTON_SIZE = 10;
             this.CAPTION_HEIGHT = 24;
-            this.MINIMIZED_WIDTH = "200px";
             this.MINIMIZED_HEIGHT = "23px";
             this.MAXIMIZED_WIDTH = "99%";
             this.MAXIMIZED_HEIGHT = "99%";
@@ -127,12 +126,14 @@ define(["require", "exports"], function (require, exports) {
                         dw.width = state.restoreWidth;
                         dw.height = state.restoreHeight;
                         dw.setPosition(state.left + "px", state.top + "px");
-                        dw.setSize(state.width + "px", state.height + "px");
+                        // I think the extends include the border and we don't want to include the border in the calculation here.
+                        dw.setSize((state.width - 2) + "px", (state.height - 2) + "px");
                         if (dw.maximizedState) {
                             document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "none");
                             document.getElementById(dw.idWindowDraggableArea).style.setProperty("cursor", "default");
                         }
                         else if (dw.minimizedState) {
+                            dw.setWidth(DivWindow.MINIMIZED_WIDTH);
                             document.getElementById(dw.idWindowTemplate).style.setProperty("resize", "none");
                             if (dw.options.moveMinimizedToBottom) {
                                 document.getElementById(dw.idWindowDraggableArea).style.setProperty("cursor", "default");
@@ -172,6 +173,12 @@ define(["require", "exports"], function (require, exports) {
             const newdw = new DivWindow(id, options);
             return newdw;
         }
+        show() {
+            this.dw.style.display = "block";
+        }
+        hide() {
+            this.dw.style.display = "none";
+        }
         setCaption(caption) {
             document.getElementById(this.idWindowCaption).innerHTML = caption;
             return this;
@@ -210,12 +217,16 @@ define(["require", "exports"], function (require, exports) {
             return this;
         }
         close() {
+            var _a;
             this.dw.remove();
             this.removeFromWindowList();
+            (_a = this.onClose) === null || _a === void 0 ? void 0 : _a.apply(null, [this]);
             return this;
         }
         minimize(atPosition = false) {
+            var _a, _b;
             this.saveState();
+            this.dw.style.width = DivWindow.MINIMIZED_WIDTH;
             this.dw.style.height = this.MINIMIZED_HEIGHT;
             this.minimizedState = true;
             this.maximizedState = false;
@@ -233,7 +244,6 @@ define(["require", "exports"], function (require, exports) {
                 }
                 const left = this.findAvailableMinimizedSlot(minTop);
                 // Force minimized window when moving to bottom to have a fixed width.
-                this.dw.style.width = this.MINIMIZED_WIDTH;
                 this.dw.style.top = minTop + "px";
                 this.dw.style.left = left + "px";
             }
@@ -241,9 +251,12 @@ define(["require", "exports"], function (require, exports) {
             if (this.options.moveMinimizedToBottom) {
                 document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "default");
             }
+            (_a = this.onSelect) === null || _a === void 0 ? void 0 : _a.apply(null, [this]);
+            (_b = this.onMinimize) === null || _b === void 0 ? void 0 : _b.apply(null, [this]);
             return this;
         }
         maximize() {
+            var _a, _b;
             this.saveState();
             let el = this.dw.parentElement.parentElement;
             let offsety = 0;
@@ -266,12 +279,19 @@ define(["require", "exports"], function (require, exports) {
             this.minimizedState = false;
             this.dw.style.setProperty("resize", "none");
             document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "default");
+            (_a = this.onSelect) === null || _a === void 0 ? void 0 : _a.apply(null, [this]);
+            (_b = this.onMaximize) === null || _b === void 0 ? void 0 : _b.apply(null, [this]);
             return this;
         }
         restore() {
-            this.restoreState();
-            this.minimizedState = false;
-            this.maximizedState = false;
+            var _a, _b;
+            if (this.minimizedState || this.maximizedState) {
+                this.restoreState();
+                this.minimizedState = false;
+                this.maximizedState = false;
+                (_a = this.onSelect) === null || _a === void 0 ? void 0 : _a.apply(null, [this]);
+                (_b = this.onRestore) === null || _b === void 0 ? void 0 : _b.apply(null, [this]);
+            }
             return this;
         }
         removeFromWindowList() {
@@ -303,12 +323,17 @@ define(["require", "exports"], function (require, exports) {
             this.height = this.dw.clientHeight;
         }
         restoreState() {
-            this.dw.style.left = this.left;
-            this.dw.style.top = this.top;
-            this.dw.style.width = this.width + "px";
-            this.dw.style.height = this.height + "px";
-            this.dw.style.setProperty("resize", "both");
-            document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "move");
+            if (this.minimizedState || this.maximizedState) {
+                // restore in place?
+                if ((this.options.moveMinimizedToBottom && this.minimizedState) || this.maximizedState) {
+                    this.dw.style.left = this.left;
+                    this.dw.style.top = this.top;
+                }
+                this.dw.style.width = this.width + "px";
+                this.dw.style.height = this.height + "px";
+                this.dw.style.setProperty("resize", "both");
+                document.getElementById(this.idWindowDraggableArea).style.setProperty("cursor", "move");
+            }
         }
         minimizeRestore() {
             this.minimizedState ? this.restore() : this.minimize();
@@ -329,11 +354,13 @@ define(["require", "exports"], function (require, exports) {
             return els;
         }
         onDraggableAreaMouseDown(e) {
+            var _a;
             this.updateZOrder();
             // Should not be draggable but we'll check anyways.
             if ((!this.minimizedState || (this.minimizedState && !this.options.moveMinimizedToBottom)) && !this.maximizedState) {
                 this.startDrag(e);
             }
+            (_a = this.onSelect) === null || _a === void 0 ? void 0 : _a.apply(null, [this]);
         }
         onMouseUp(e) {
             this.stopDrag();
@@ -441,5 +468,6 @@ define(["require", "exports"], function (require, exports) {
     }
     exports.DivWindow = DivWindow;
     DivWindow.divWindows = [];
+    DivWindow.MINIMIZED_WIDTH = "200px";
 });
 //# sourceMappingURL=divWindow.js.map
